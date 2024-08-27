@@ -56,6 +56,7 @@ Purpose:  This project will show you the difference between member functions and
 
 #include <iostream>
 #include <string>
+
 struct T
 {
     T(<#type name#> v, const char* <#variable name#>)   //1
