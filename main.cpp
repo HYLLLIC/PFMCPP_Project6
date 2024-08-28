@@ -59,22 +59,21 @@ Purpose:  This project will show you the difference between member functions and
 
 struct T
 {
-    T(int v, const char* w)
-    {
-        value = v;
-        name = w;
-    }
+    T(int v, const char* w) : value(v), name(w) {}
 
     int value;
-    const char* name;
+    std::string name;
 };
 
 struct Comparison
 {
     T* compare(T* a, T* b)
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if( a!=nullptr && b!=nullptr )
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
@@ -84,10 +83,14 @@ struct U
     float a { 0 }, b { 0 };
     float makeCloser(float* newValue)
     {
-        a = *newValue;
-        while( std::abs(b - a) > 0.001f )
+        std::cout << "U's a value: " << a << std::endl;
+        if (newValue != nullptr)
+        {
+            a = *newValue;
+            std::cout << "U's updated a value: " << a << std::endl;
+            while( std::abs(b - a) > 0.001f )
             {
-            if (b < a) 
+                if (b < a) 
                 {
                     b += 1.0f;
                 }
@@ -95,20 +98,25 @@ struct U
                 {
                     b -= 0.01f;
                 }
+            }
+            std::cout << "U's b updated value: " << b << std::endl;
             return a*b;
+        }
+        else
+        return 0.f;
     }
 };
 
 struct Closer
 {
-    static float getCloser(U* that, float* newValue )        //10
+    static float getCloser(U* that, float* newValue )
     {
         std::cout << "U's a value: " << that->a << std::endl;
-        that->a = newValue;
+        that->a = *newValue;
         std::cout << "U's a updated value: " << that->a << std::endl;
         while( std::abs(that->b - that->a) > 0.001f )
         {
-            if that->b < that->a 
+            if (that->b < that->a)
             {
                 that->b += 1.0f;
             }
@@ -116,7 +124,6 @@ struct Closer
             {
                 that->b -= 0.01f;
             }
-            that-><b += ;
         }
         std::cout << "U's b updated value: " << that->b << std::endl;
         return that->b * that->a;
@@ -139,12 +146,26 @@ struct Closer
 
 int main()
 {
-    T test1(1, 'x');
-    T test2(2, 'y');
+    T test1(1, "x");
+    T test2(2, "y");
     
     Comparison f;
     auto* smaller = f.compare(&test1, &test2);
-    std::cout << "the smaller one is << " << smaller->name << std::endl;
+    if(smaller != nullptr)
+        {
+            std::cout << "The smaller one is: " << smaller->name << std::endl;
+        }
+        else
+        {
+            if (test1.value == test2.value)
+            {
+                std::cout << "the values of " << test1.name << " and " << test2.name << " are the same" << std::endl;
+            }
+            else
+            {
+                std::cout << "Error: an invalid pointer was returned from the smaller function because of the pointer supplied to it" << std::endl;
+            }
+        }
     
     U test3;
     float updatedValue = 5.f;
