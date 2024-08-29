@@ -110,22 +110,26 @@ struct Closer
 {
     static float getCloser(U* that, float* newValue )
     {
-        std::cout << "U's a value: " << that->a << std::endl;
-        that->a = *newValue;
-        std::cout << "U's a updated value: " << that->a << std::endl;
-        while( std::abs(that->b - that->a) > 0.001f )
+        if (that != nullptr && newValue != nullptr)
         {
-            if (that->b < that->a)
+            std::cout << "U's a value: " << that->a << std::endl;
+            that->a = *newValue;
+            std::cout << "U's a updated value: " << that->a << std::endl;
+            while( std::abs(that->b - that->a) > 0.001f )
             {
-                that->b += 1.0f;
+                if (that->b < that->a)
+                {
+                    that->b += 1.0f;
+                }
+                else
+                {
+                    that->b -= 0.01f;
+                }
             }
-            else
-            {
-                that->b -= 0.01f;
-            }
+            std::cout << "U's b updated value: " << that->b << std::endl;
+            return that->b * that->a;
         }
-        std::cout << "U's b updated value: " << that->b << std::endl;
-        return that->b * that->a;
+        return 0.f;
     }
 };
         
