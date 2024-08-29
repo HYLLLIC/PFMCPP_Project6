@@ -69,7 +69,7 @@ struct Comparison
 {
     T* compare(T* a, T* b)
     {
-        if( a!=nullptr && b!=nullptr )
+        if( a != nullptr && b != nullptr )
         {
             if( a->value < b->value ) return a;
             if( a->value > b->value ) return b;
@@ -100,9 +100,8 @@ struct U
                 }
             }
             std::cout << "U's b updated value: " << b << std::endl;
-            return a*b;
+            return a * b;
         }
-        else
         return 0.f;
     }
 };
@@ -152,20 +151,20 @@ int main()
     Comparison f;
     auto* smaller = f.compare(&test1, &test2);
     if(smaller != nullptr)
+    {
+        std::cout << "The smaller one is: " << smaller->name << std::endl;
+    }
+    else
+    {
+        if (test1.value == test2.value)
         {
-            std::cout << "The smaller one is: " << smaller->name << std::endl;
+            std::cout << "the values of " << test1.name << " and " << test2.name << " are the same" << std::endl;
         }
         else
         {
-            if (test1.value == test2.value)
-            {
-                std::cout << "the values of " << test1.name << " and " << test2.name << " are the same" << std::endl;
-            }
-            else
-            {
-                std::cout << "Error: an invalid pointer was returned from the smaller function because of the pointer supplied to it" << std::endl;
-            }
+            std::cout << "Error: an invalid pointer was returned from the smaller function because of the pointer supplied to it" << std::endl;
         }
+    }
     
     U test3;
     float updatedValue = 5.f;
