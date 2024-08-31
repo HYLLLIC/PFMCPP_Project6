@@ -56,48 +56,80 @@ Purpose:  This project will show you the difference between member functions and
 
 #include <iostream>
 #include <string>
+
 struct T
 {
-    T(<#type name#> v, const char* <#variable name#>)   //1
-    //2
-    //3
+    T(int v, const char* w) : value(v), name(w) {}
+
+    int value;
+    std::string name;
 };
 
-struct <#structName1#>                                //4
+struct Comparison
 {
-    <#type name#> compare(<#type name#> a, <#type name#> b) //5
+    T* compare(T* a, T* b)
     {
-        if( a->value < b->value ) return a;
-        if( a->value > b->value ) return b;
+        if( a != nullptr && b != nullptr )
+        {
+            if( a->value < b->value ) return a;
+            if( a->value > b->value ) return b;
+        }
         return nullptr;
     }
 };
 
 struct U
 {
-    float <#name1#> { 0 }, <#name2#> { 0 };
-    <#returnType#> <#memberFunction#>(<#type name#>* <#updatedValue#>)      //12
+    float a { 0 }, b { 0 };
+    float makeCloser(float* newValue)
     {
-        
+        std::cout << "U's a value: " << a << std::endl;
+        if (newValue != nullptr)
+        {
+            a = *newValue;
+            std::cout << "U's updated a value: " << a << std::endl;
+            while( std::abs(b - a) > 0.001f )
+            {
+                if (b < a) 
+                {
+                    b += 1.0f;
+                }
+                else
+                {
+                    b -= 0.01f;
+                }
+            }
+            std::cout << "U's b updated value: " << b << std::endl;
+            return a * b;
+        }
+        return 0.f;
     }
 };
 
-struct <#structname2#>
+struct Closer
 {
-    static <#returntype#> <#staticFunctionA#>(U* that, <#type name#>* <#updatedValue#> )        //10
+    static float getCloser(U* that, float* newValue )
     {
-        std::cout << "U's <#name1#> value: " << that-><#name1#> << std::endl;
-        that-><#name1#> = <#updatedValue#>;
-        std::cout << "U's <#name1#> updated value: " << that-><#name1#> << std::endl;
-        while( std::abs(that-><#name2#> - that-><#name1#>) > 0.001f )
+        if (that != nullptr && newValue != nullptr)
         {
-            /*
-             write something that makes the distance between that-><#name2#> and that-><#name1#> get smaller
-             */
-            that-><#name2#> += ;
+            std::cout << "U's a value: " << that->a << std::endl;
+            that->a = *newValue;
+            std::cout << "U's a updated value: " << that->a << std::endl;
+            while( std::abs(that->b - that->a) > 0.001f )
+            {
+                if (that->b < that->a)
+                {
+                    that->b += 1.0f;
+                }
+                else
+                {
+                    that->b -= 0.01f;
+                }
+            }
+            std::cout << "U's b updated value: " << that->b << std::endl;
+            return that->b * that->a;
         }
-        std::cout << "U's <#name2#> updated value: " << that-><#name2#> << std::endl;
-        return that-><#name2#> * that-><#name1#>;
+        return 0.f;
     }
 };
         
@@ -117,17 +149,31 @@ struct <#structname2#>
 
 int main()
 {
-    T <#name1#>( , );                                             //6
-    T <#name2#>( , );                                             //6
+    T test1(1, "x");
+    T test2(2, "y");
     
-    <#structName1#> f;                                            //7
-    auto* smaller = f.compare( , );                              //8
-    std::cout << "the smaller one is << " << smaller->name << std::endl; //9
+    Comparison f;
+    auto* smaller = f.compare(&test1, &test2);
+    if(smaller != nullptr)
+    {
+        std::cout << "The smaller one is: " << smaller->name << std::endl;
+    }
+    else
+    {
+        if (test1.value == test2.value)
+        {
+            std::cout << "the values of " << test1.name << " and " << test2.name << " are the same" << std::endl;
+        }
+        else
+        {
+            std::cout << "Error: an invalid pointer was returned from the smaller function because of the pointer supplied to it" << std::endl;
+        }
+    }
     
-    U <#name3#>;
+    U test3;
     float updatedValue = 5.f;
-    std::cout << "[static func] <#name3#>'s multiplied values: " << <#structname2#>::<#staticFunctionA#>( , ) << std::endl;                  //11
+    std::cout << "[static func] test3's multiplied values: " << Closer::getCloser(&test3,&updatedValue) << std::endl;        
     
-    U <#name4#>;
-    std::cout << "[member func] <#name4#>'s multiplied values: " << <#name4#>.<#memberFunction#>( &updatedValue ) << std::endl;
+    U test4;
+    std::cout << "[member func] test4's multiplied values: " << test4.makeCloser( &updatedValue ) << std::endl;
 }
