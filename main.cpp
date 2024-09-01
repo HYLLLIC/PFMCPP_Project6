@@ -38,13 +38,10 @@ struct T
 
 struct Comparison
 {
-    T* compare(T* a, T* b)
+    T* compare(T& a, T& b)
     {
-        if( a != nullptr && b != nullptr )
-        {
-            if( a->value < b->value ) return a;
-            if( a->value > b->value ) return b;
-        }
+        if( a.value < b.value ) return &a;
+        if( a.value > b.value ) return &b;
         return nullptr;
     }
 };
@@ -52,55 +49,47 @@ struct Comparison
 struct U
 {
     float a { 0 }, b { 0 };
-    float makeCloser(float* newValue)
+    float makeCloser(float& newValue)
     {
         std::cout << "U's a value: " << a << std::endl;
-        if (newValue != nullptr)
+        a = newValue;
+        std::cout << "U's updated a value: " << a << std::endl;
+        while( std::abs(b - a) > 0.001f )
         {
-            a = *newValue;
-            std::cout << "U's updated a value: " << a << std::endl;
-            while( std::abs(b - a) > 0.001f )
+            if (b < a) 
             {
-                if (b < a) 
-                {
-                    b += 1.0f;
-                }
-                else
-                {
-                    b -= 0.01f;
-                }
+                b += 1.0f;
             }
-            std::cout << "U's b updated value: " << b << std::endl;
-            return a * b;
+            else
+            {
+                b -= 0.01f;
+            }
         }
-        return 0.f;
+        std::cout << "U's b updated value: " << b << std::endl;
+        return a * b;
     }
 };
 
 struct Closer
 {
-    static float getCloser(U* that, float* newValue )
+    static float getCloser(U& that, float& newValue )
     {
-        if (that != nullptr && newValue != nullptr)
+        std::cout << "U's a value: " << that.a << std::endl;
+        that.a = newValue;
+        std::cout << "U's a updated value: " << that.a << std::endl;
+        while( std::abs(that.b - that.a) > 0.001f )
         {
-            std::cout << "U's a value: " << that->a << std::endl;
-            that->a = *newValue;
-            std::cout << "U's a updated value: " << that->a << std::endl;
-            while( std::abs(that->b - that->a) > 0.001f )
+            if (that.b < that.a)
             {
-                if (that->b < that->a)
-                {
-                    that->b += 1.0f;
-                }
-                else
-                {
-                    that->b -= 0.01f;
-                }
+                that.b += 1.0f;
             }
-            std::cout << "U's b updated value: " << that->b << std::endl;
-            return that->b * that->a;
+            else
+            {
+                that.b -= 0.01f;
+            }
         }
-        return 0.f;
+        std::cout << "U's b updated value: " << that.b << std::endl;
+        return that.b * that.a;
     }
 };
         
@@ -124,27 +113,20 @@ int main()
     T test2(2, "y");
     
     Comparison f;
-    auto* smaller = f.compare(&test1, &test2);
+    auto* smaller = f.compare(test1, test2);
     if(smaller != nullptr)
     {
         std::cout << "The smaller one is: " << smaller->name << std::endl;
     }
     else
     {
-        if (test1.value == test2.value)
-        {
-            std::cout << "the values of " << test1.name << " and " << test2.name << " are the same" << std::endl;
-        }
-        else
-        {
-            std::cout << "Error: an invalid pointer was returned from the smaller function because of the pointer supplied to it" << std::endl;
-        }
+        std::cout << "the values of " << test1.name << " and " << test2.name << " are the same" << std::endl;
     }
     
     U test3;
     float updatedValue = 5.f;
-    std::cout << "[static func] test3's multiplied values: " << Closer::getCloser(&test3,&updatedValue) << std::endl;        
+    std::cout << "[static func] test3's multiplied values: " << Closer::getCloser(test3, updatedValue) << std::endl;        
     
     U test4;
-    std::cout << "[member func] test4's multiplied values: " << test4.makeCloser( &updatedValue ) << std::endl;
+    std::cout << "[member func] test4's multiplied values: " << test4.makeCloser( updatedValue ) << std::endl;
 }
